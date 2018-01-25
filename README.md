@@ -11,6 +11,11 @@ This is a fork of the excellent original [Capstone disassembly framework](https:
 
 There are no plans for further modifications on this fork (except the conversion of the Java binding code into a Maven project). Every time when the original Capstone project ([aquynh/capstone](https://github.com/aquynh/capstone)) provides a new release then this code (inclusive Java binding) will be forked again, modified for Maven and distributed as Maven artifact for public use.
 
+There's an open pull request on the original project which is intended for the transformation of the existing Java binding into a Maven project. Unfortunately, the progress came to a standstill. If you have ideas for moving it forward, feel free to participate in:
+
+* [Converted Java binding into Maven project](https://github.com/aquynh/capstone/pull/609)
+* [change makefile for Maven construct package](https://github.com/aquynh/capstone/pull/678)
+
 ## Issue tracking
 
 Bugs, feature requests or pull requests should be reported via Github's issue tracking system. We only accept requests that concern the conversion to Maven project of the Java binding part. Issues in Capstone itself or in the Java binding code should be reported at the [original project site](https://github.com/aquynh/capstone/issues).
@@ -39,10 +44,5 @@ You can import the artifact by:
 Furthermore, you need to obtain the native binaries from <http://www.capstone-engine.org/> or from the releases page: <https://github.com/aquynh/capstone/releases>
 
 Please note that the provided command line based test classes from the original project of Java binding are not intact anymore, because the binding code classes were moved in order to create a Maven compatible structure.
-
-
-
-
-
 
 https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
