@@ -28,7 +28,7 @@
 
 #include "AArch64BaseInfo.h"
 
-const char *A64NamedImmMapper_toString(const A64NamedImmMapper *N, uint32_t Value, bool *Valid)
+char *A64NamedImmMapper_toString(A64NamedImmMapper *N, uint32_t Value, bool *Valid)
 {
 	unsigned i;
 	for (i = 0; i < N->NumPairs; ++i) {
@@ -44,7 +44,7 @@ const char *A64NamedImmMapper_toString(const A64NamedImmMapper *N, uint32_t Valu
 
 // compare s1 with lower(s2)
 // return true if s1 == lower(f2), and false otherwise
-static bool compare_lower_str(const char *s1, const char *s2)
+static bool compare_lower_str(char *s1, char *s2)
 {
 	bool res;
 	char *lower = cs_strdup(s2), *c;
@@ -57,7 +57,7 @@ static bool compare_lower_str(const char *s1, const char *s2)
 	return res;
 }
 
-uint32_t A64NamedImmMapper_fromString(const A64NamedImmMapper *N, char *Name, bool *Valid)
+uint32_t A64NamedImmMapper_fromString(A64NamedImmMapper *N, char *Name, bool *Valid)
 {
 	unsigned i;
 	for (i = 0; i < N->NumPairs; ++i) {
@@ -71,7 +71,7 @@ uint32_t A64NamedImmMapper_fromString(const A64NamedImmMapper *N, char *Name, bo
 	return (uint32_t)-1;
 }
 
-bool A64NamedImmMapper_validImm(const A64NamedImmMapper *N, uint32_t Value)
+bool A64NamedImmMapper_validImm(A64NamedImmMapper *N, uint32_t Value)
 {
 	return Value < N->TooBigImm;
 }
@@ -98,7 +98,7 @@ static char *utostr(uint64_t X, bool isNeg)
 	return result;
 }
 
-static const A64NamedImmMapper_Mapping SysRegPairs[] = {
+static A64NamedImmMapper_Mapping SysRegPairs[] = {
 	{"pan", A64SysReg_PAN},
 	{"uao", A64SysReg_UAO},
 	{"osdtrrx_el1", A64SysReg_OSDTRRX_EL1},
@@ -622,12 +622,12 @@ static const A64NamedImmMapper_Mapping SysRegPairs[] = {
 	{"pmslatfr_el1", A64SysReg_PMSLATFR_EL1}
 };
 
-static const A64NamedImmMapper_Mapping CycloneSysRegPairs[] = {
+static A64NamedImmMapper_Mapping CycloneSysRegPairs[] = {
 	{"cpm_ioacc_ctl_el3", A64SysReg_CPM_IOACC_CTL_EL3}
 };
 
 // result must be a big enough buffer: 128 bytes is more than enough
-void A64SysRegMapper_toString(const A64SysRegMapper *S, uint32_t Bits, bool *Valid, char *result)
+void A64SysRegMapper_toString(A64SysRegMapper *S, uint32_t Bits, bool *Valid, char *result)
 {
 	int dummy;
 	uint32_t Op0, Op1, CRn, CRm, Op2;
@@ -697,7 +697,7 @@ void A64SysRegMapper_toString(const A64SysRegMapper *S, uint32_t Bits, bool *Val
 	cs_mem_free(Op2S);
 }
 
-static const A64NamedImmMapper_Mapping TLBIPairs[] = {
+static A64NamedImmMapper_Mapping TLBIPairs[] = {
 	{"ipas2e1is", A64TLBI_IPAS2E1IS},
 	{"ipas2le1is", A64TLBI_IPAS2LE1IS},
 	{"vmalle1is", A64TLBI_VMALLE1IS},
@@ -732,13 +732,13 @@ static const A64NamedImmMapper_Mapping TLBIPairs[] = {
 	{"vaale1", A64TLBI_VAALE1}
 };
 
-const A64NamedImmMapper A64TLBI_TLBIMapper = {
+A64NamedImmMapper A64TLBI_TLBIMapper = {
 	TLBIPairs,
 	ARR_SIZE(TLBIPairs),
 	0,
 };
 
-static const A64NamedImmMapper_Mapping ATPairs[] = {
+static A64NamedImmMapper_Mapping ATPairs[] = {
 	{"s1e1r", A64AT_S1E1R},
 	{"s1e2r", A64AT_S1E2R},
 	{"s1e3r", A64AT_S1E3R},
@@ -753,13 +753,13 @@ static const A64NamedImmMapper_Mapping ATPairs[] = {
 	{"s12e0w", A64AT_S12E0W}
 };
 
-const A64NamedImmMapper A64AT_ATMapper = {
+A64NamedImmMapper A64AT_ATMapper = {
 	ATPairs,
 	ARR_SIZE(ATPairs),
 	0,
 };
 
-static const A64NamedImmMapper_Mapping DBarrierPairs[] = {
+static A64NamedImmMapper_Mapping DBarrierPairs[] = {
 	{"oshld", A64DB_OSHLD},
 	{"oshst", A64DB_OSHST},
 	{"osh", A64DB_OSH},
@@ -774,13 +774,13 @@ static const A64NamedImmMapper_Mapping DBarrierPairs[] = {
 	{"sy", A64DB_SY}
 };
 
-const A64NamedImmMapper A64DB_DBarrierMapper = {
+A64NamedImmMapper A64DB_DBarrierMapper = {
 	DBarrierPairs,
 	ARR_SIZE(DBarrierPairs),
 	16,
 };
 
-static const A64NamedImmMapper_Mapping DCPairs[] = {
+static A64NamedImmMapper_Mapping DCPairs[] = {
 	{"zva", A64DC_ZVA},
 	{"ivac", A64DC_IVAC},
 	{"isw", A64DC_ISW},
@@ -791,35 +791,35 @@ static const A64NamedImmMapper_Mapping DCPairs[] = {
 	{"cisw", A64DC_CISW}
 };
 
-const A64NamedImmMapper A64DC_DCMapper = {
+A64NamedImmMapper A64DC_DCMapper = {
 	DCPairs,
 	ARR_SIZE(DCPairs),
 	0,
 };
 
-static const A64NamedImmMapper_Mapping ICPairs[] = {
+static A64NamedImmMapper_Mapping ICPairs[] = {
 	{"ialluis",  A64IC_IALLUIS},
 	{"iallu", A64IC_IALLU},
 	{"ivau", A64IC_IVAU}
 };
 
-const A64NamedImmMapper A64IC_ICMapper = {
+A64NamedImmMapper A64IC_ICMapper = {
 	ICPairs,
 	ARR_SIZE(ICPairs),
 	0,
 };
 
-static const A64NamedImmMapper_Mapping ISBPairs[] = {
+static A64NamedImmMapper_Mapping ISBPairs[] = {
 	{"sy",  A64DB_SY},
 };
 
-const A64NamedImmMapper A64ISB_ISBMapper = {
+A64NamedImmMapper A64ISB_ISBMapper = {
 	ISBPairs,
 	ARR_SIZE(ISBPairs),
 	16,
 };
 
-static const A64NamedImmMapper_Mapping PRFMPairs[] = {
+static A64NamedImmMapper_Mapping PRFMPairs[] = {
 	{"pldl1keep", A64PRFM_PLDL1KEEP},
 	{"pldl1strm", A64PRFM_PLDL1STRM},
 	{"pldl2keep", A64PRFM_PLDL2KEEP},
@@ -840,13 +840,13 @@ static const A64NamedImmMapper_Mapping PRFMPairs[] = {
 	{"pstl3strm", A64PRFM_PSTL3STRM}
 };
 
-const A64NamedImmMapper A64PRFM_PRFMMapper = {
+A64NamedImmMapper A64PRFM_PRFMMapper = {
 	PRFMPairs,
 	ARR_SIZE(PRFMPairs),
 	32,
 };
 
-static const A64NamedImmMapper_Mapping PStatePairs[] = {
+static A64NamedImmMapper_Mapping PStatePairs[] = {
 	{"spsel", A64PState_SPSel},
 	{"daifset", A64PState_DAIFSet},
 	{"daifclr", A64PState_DAIFClr},
@@ -854,13 +854,13 @@ static const A64NamedImmMapper_Mapping PStatePairs[] = {
 	{"uao", A64PState_UAO}
 };
 
-const A64NamedImmMapper A64PState_PStateMapper = {
+A64NamedImmMapper A64PState_PStateMapper = {
 	PStatePairs,
 	ARR_SIZE(PStatePairs),
 	0,
 };
 
-static const A64NamedImmMapper_Mapping MRSPairs[] = {
+static A64NamedImmMapper_Mapping MRSPairs[] = {
 	{"mdccsr_el0", A64SysReg_MDCCSR_EL0},
 	{"dbgdtrrx_el0", A64SysReg_DBGDTRRX_EL0},
 	{"mdrar_el1", A64SysReg_MDRAR_EL1},
@@ -966,13 +966,13 @@ static const A64NamedImmMapper_Mapping MRSPairs[] = {
 	{"pmbidr_el1", A64SysReg_PMBIDR_EL1}
 };
 
-const A64SysRegMapper AArch64_MRSMapper = {
+A64SysRegMapper AArch64_MRSMapper = {
 	NULL,
 	MRSPairs,
 	ARR_SIZE(MRSPairs),
 };
 
-static const A64NamedImmMapper_Mapping MSRPairs[] = {
+static A64NamedImmMapper_Mapping MSRPairs[] = {
 	{"dbgdtrtx_el0", A64SysReg_DBGDTRTX_EL0},
 	{"oslar_el1", A64SysReg_OSLAR_EL1},
 	{"pmswinc_el0", A64SysReg_PMSWINC_EL0},
@@ -990,7 +990,7 @@ static const A64NamedImmMapper_Mapping MSRPairs[] = {
 	{"icc_sgi0r_el1", A64SysReg_ICC_SGI0R_EL1}
 };
 
-const A64SysRegMapper AArch64_MSRMapper = {
+A64SysRegMapper AArch64_MSRMapper = {
 	NULL,
 	MSRPairs,
 	ARR_SIZE(MSRPairs),

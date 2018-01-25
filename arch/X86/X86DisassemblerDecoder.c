@@ -723,13 +723,7 @@ static int readPrefixes(struct InternalInstruction *insn)
 						| (xFromEVEX2of4(insn->vectorExtensionPrefix[1]) << 1)
 						| (bFromEVEX2of4(insn->vectorExtensionPrefix[1]) << 0);
 				}
-				switch (ppFromEVEX3of4(insn->vectorExtensionPrefix[2])) {
-					default:
-						break;
-					case VEX_PREFIX_66:
-						hasOpSize = true;
-						break;
-				}
+
 				//dbgprintf(insn, "Found EVEX prefix 0x%hhx 0x%hhx 0x%hhx 0x%hhx",
 				//		insn->vectorExtensionPrefix[0], insn->vectorExtensionPrefix[1],
 				//		insn->vectorExtensionPrefix[2], insn->vectorExtensionPrefix[3]);
@@ -770,13 +764,6 @@ static int readPrefixes(struct InternalInstruction *insn)
 					| (xFromVEX2of3(insn->vectorExtensionPrefix[1]) << 1)
 					| (bFromVEX2of3(insn->vectorExtensionPrefix[1]) << 0);
 
-			}
-			switch (ppFromVEX3of3(insn->vectorExtensionPrefix[2])) {
-				default:
-					break;
-				case VEX_PREFIX_66:
-					hasOpSize = true;
-					break;
 			}
 		}
 	} else if (byte == 0xc5) {

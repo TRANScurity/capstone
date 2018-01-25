@@ -302,7 +302,7 @@ static void printPCRelOperand(MCInst *MI, int OpNum, SStream *O)
 				SStream_concat(O, "%u", imm);
 		} else {
 			if (imm < -HEX_THRESHOLD)
-				SStream_concat(O, "-0x%x", (unsigned int)-imm);
+				SStream_concat(O, "-0x%x", -imm);
 			else
 				SStream_concat(O, "-%u", -imm);
 		}
@@ -364,7 +364,7 @@ static void printBDLAddrOperand(MCInst *MI, int OpNum, SStream *O)
 
 static void printCond4Operand(MCInst *MI, int OpNum, SStream *O)
 {
-	static const char *const CondNames[] = {
+	static char *const CondNames[] = {
 		"o", "h", "nle", "l", "nhe", "lh", "ne",
 		"e", "nlh", "he", "nl", "le", "nh", "no"
 	};

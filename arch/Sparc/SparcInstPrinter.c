@@ -38,8 +38,8 @@
 
 #include "Sparc.h"
 
-static const char *getRegisterName(unsigned RegNo);
-static void printInstruction(MCInst *MI, SStream *O, const MCRegisterInfo *MRI);
+static char *getRegisterName(unsigned RegNo);
+static void printInstruction(MCInst *MI, SStream *O, MCRegisterInfo *MRI);
 static void printMemOperand(MCInst *MI, int opNum, SStream *O, const char *Modifier);
 static void printOperand(MCInst *MI, int opNum, SStream *O);
 
@@ -269,7 +269,7 @@ static void printOperand(MCInst *MI, int opNum, SStream *O)
 				SStream_concat(O, "%u", Imm);
 		} else {
 			if (Imm < -HEX_THRESHOLD)
-				SStream_concat(O, "-0x%x", (unsigned int)-Imm);
+				SStream_concat(O, "-0x%x", -Imm);
 			else
 				SStream_concat(O, "-%u", -Imm);
 		}
