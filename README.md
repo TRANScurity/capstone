@@ -21,7 +21,7 @@ If you would like to help us please contact us via issue tracking or email.
 
 ## License & Author
 
-The license and author is the same as in the original project. We only modify the structure of Java binding code in order to make it compatible with Maven.
+The license and author is the same as in the original project. We ([TRANScurity](http://transcurity.co/)) only modify the structure of Java binding code in order to make it compatible with Maven.
 
 # Developer Guide
 ## Getting started
