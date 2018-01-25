@@ -61,7 +61,7 @@ void print_insn_detail_x86(csh ud, cs_mode mode, cs_insn *ins)
 	}
 
 	count = cs_op_count(ud, ins, X86_OP_IMM);
-	if (count > 0) {
+	if (count) {
 		printf("\timm_count: %u\n", count);
 		for (i = 1; i < count + 1; i++) {
 			int index = cs_op_index(ud, ins, X86_OP_IMM, i);

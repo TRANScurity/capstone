@@ -4,11 +4,7 @@
 #ifndef CS_UTILS_H
 #define CS_UTILS_H
 
-#if defined(CAPSTONE_HAS_OSXKERNEL)
-#include <libkern/libkern.h>
-#else
 #include <stddef.h>
-#endif
 #include "include/capstone.h"
 #include "cs_priv.h"
 

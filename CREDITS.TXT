@@ -62,4 +62,3 @@ Satoshi Tanda: Support Windows kernel driver.
 Tang Yuhang: cstool.
 Andrew Dutcher: better Python setup.
 Ruben Boonen: PowerShell binding.
-David Zimmer: VB6 binding.

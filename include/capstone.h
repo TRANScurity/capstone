@@ -34,9 +34,9 @@ extern "C" {
 #endif
 #else
 #define CAPSTONE_API
-#if defined(__GNUC__) && !defined(CAPSTONE_STATIC)
+#ifdef __GNUC__
 #define CAPSTONE_EXPORT __attribute__((visibility("default")))
-#else    // defined(CAPSTONE_STATIC)
+#else
 #define CAPSTONE_EXPORT
 #endif
 #endif
