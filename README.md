@@ -68,6 +68,8 @@ Exception in thread "main" java.lang.UnsatisfiedLinkError: Unable to load librar
 java -Djava.library.path=C:\my\lookup\path\folder -jar disassembler-1.0-SNAPSHOT.jar
 ```
 
-If Capstone is accessible but this error still occurs then indeed there may be further DLLs missing that are imported by Capstone. One of these DLLs is ``vcruntime140.dll``. Usually, it comes with the installation of Visual Studio but you could also obtain it anywhere else and put it near ``capstone.dll``. [Dependency Walker](http://www.dependencywalker.com/) is a tool that shows you which dependent DLL in ``capstone.dll`` cannot be found.
+This error also occurs if you try to execute a 64 bit JVM with a 32 bit ``capstone.dll``. You cannot mix 32 bit and 64 bit architectures.
+
+If Capstone is accessible for the JVM and has a matching architecture but this error still occurs then indeed there may be further DLLs missing that are imported by Capstone. One of these DLLs is ``vcruntime140.dll``. Usually, it comes with the installation of Visual Studio but you could also obtain it anywhere else and put it near ``capstone.dll``. [Dependency Walker](http://www.dependencywalker.com/) is a tool that shows you which dependent DLL in ``capstone.dll`` cannot be found.
 
 https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
