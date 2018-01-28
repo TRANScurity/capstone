@@ -50,7 +50,7 @@ Please note that the provided command line based test classes from the original 
 
 If you get following Exception:
 
-```java
+```
 ...\Disassembler\target>java -jar disassembler-1.0-SNAPSHOT.jar
 Exception in thread "main" java.lang.UnsatisfiedLinkError: Unable to load library 'capstone': Native library (win32-x86-64/capstone.dll) not found in resource path ([file:/.../Disassembler/target/disassembler-1.0-SNAPSHOT.jar])
         at com.sun.jna.NativeLibrary.loadLibrary(NativeLibrary.java:303)
@@ -59,12 +59,12 @@ Exception in thread "main" java.lang.UnsatisfiedLinkError: Unable to load librar
         at com.sun.jna.Native.loadLibrary(Native.java:569)
         at com.sun.jna.Native.loadLibrary(Native.java:544)
         at capstone.Capstone.<init>(Capstone.java:372)
-        at org.pevalidation.disassembler.Main.main(Main.java:157)
+        at co.transcurity.disassembler.Main.main(Main.java:157)
 ```
 
 ...it may give the impression that ``capstone.dll`` cannot be located. First, make sure that your ``capstone.dll`` is located in the same directory just like your JAR file or that it is installed in any other lookup path (e. g. ``C:\Windows\System32`` or respectively ``C:\Windows\SysWOW64`` for 32 bit JVM) examined by Java. You can also modify the lookup path on start up:
 
-```java
+```
 java -Djava.library.path=C:\my\lookup\path\folder -jar disassembler-1.0-SNAPSHOT.jar
 ```
 
