@@ -46,7 +46,7 @@ Furthermore, you need to obtain the native binaries from <http://www.capstone-en
 Please note that the provided command line based test classes from the original project of Java binding are not intact anymore, because the binding code classes were moved in order to create a Maven compatible structure.
 
 ## Troubleshooting
-###The Java wrapper cannot find the natives and aborts with: ``UnsatisfiedLinkError``
+### The Java wrapper cannot find the natives and aborts with: ``UnsatisfiedLinkError``
 
 If you get following Exception:
 
