@@ -1,8 +1,9 @@
 /* Capstone Disassembly Engine */
-/* By Satoshi Tanda <tanda.sat@gmail.com>, 2016 */
+/* By Satoshi Tanda <tanda.sat@gmail.com>, 2016-2019 */
 
 #include "winkernel_mm.h"
 #include <ntddk.h>
+#include <Ntintsafe.h>
 
 // A pool tag for memory allocation
 static const ULONG CS_WINKERNEL_POOL_TAG = 'kwsC';
@@ -11,9 +12,9 @@ static const ULONG CS_WINKERNEL_POOL_TAG = 'kwsC';
 // A structure to implement realloc()
 typedef struct _CS_WINKERNEL_MEMBLOCK {
 	size_t size;   // A number of bytes allocated
-	char data[1];  // An address returned to a caller
+	__declspec(align(MEMORY_ALLOCATION_ALIGNMENT))
+	char data[ANYSIZE_ARRAY];  // An address returned to a caller
 } CS_WINKERNEL_MEMBLOCK;
-C_ASSERT(sizeof(CS_WINKERNEL_MEMBLOCK) == sizeof(void *) * 2);
 
 
 // free()
@@ -32,9 +33,17 @@ void * CAPSTONE_API cs_winkernel_malloc(size_t size)
 	NT_ASSERT(size);
 
 	// FP; a use of NonPagedPool is required for Windows 7 support
+	size_t number_of_bytes = 0;
+	CS_WINKERNEL_MEMBLOCK *block = NULL;
+	// A specially crafted size value can trigger the overflow.
+	// If the sum in a value that overflows or underflows the capacity of the type,
+	// the function returns NULL.
+	if (!NT_SUCCESS(RtlSizeTAdd(size, FIELD_OFFSET(CS_WINKERNEL_MEMBLOCK, data), &number_of_bytes))) {
+		return NULL;
+	}
 #pragma prefast(suppress : 30030)		// Allocating executable POOL_TYPE memory
-	CS_WINKERNEL_MEMBLOCK *block = (CS_WINKERNEL_MEMBLOCK *)ExAllocatePoolWithTag(
-			NonPagedPool, size + sizeof(CS_WINKERNEL_MEMBLOCK), CS_WINKERNEL_POOL_TAG);
+	block = (CS_WINKERNEL_MEMBLOCK *)ExAllocatePoolWithTag(
+			NonPagedPool, number_of_bytes, CS_WINKERNEL_POOL_TAG);
 	if (!block) {
 		return NULL;
 	}

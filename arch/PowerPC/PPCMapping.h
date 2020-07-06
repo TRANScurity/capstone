@@ -1,10 +1,10 @@
 /* Capstone Disassembly Engine */
-/* By Nguyen Anh Quynh <aquynh@gmail.com>, 2013-2014 */
+/* By Nguyen Anh Quynh <aquynh@gmail.com>, 2013-2015 */
 
 #ifndef CS_PPC_MAP_H
 #define CS_PPC_MAP_H
 
-#include "../../include/capstone.h"
+#include "capstone/capstone.h"
 
 // return name of regiser in friendly string
 const char *PPC_reg_name(csh handle, unsigned int reg);
@@ -29,6 +29,9 @@ bool PPC_alias_insn(const char *name, struct ppc_alias *alias);
 
 // check if this insn is relative branch
 bool PPC_abs_branch(cs_struct *h, unsigned int id);
+
+// map instruction name to public instruction ID
+ppc_insn PPC_map_insn(const char *name);
 
 #endif
 

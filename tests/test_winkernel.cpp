@@ -1,8 +1,10 @@
 /* Capstone Disassembly Engine */
-/* By Satoshi Tanda <tanda.sat@gmail.com>, 2016 */
+/* By Satoshi Tanda <tanda.sat@gmail.com>, 2016-2019 */
 
 #include <ntddk.h>
-#include <capstone.h>
+
+#include <capstone/platform.h>
+#include <capstone/capstone.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,9 +32,9 @@ EXTERN_C DRIVER_INITIALIZE DriverEntry;
 // is going to be compiled as C++ source file and not C files because this file
 // is C++.
 
-namespace unnamed {
-#include "test.c"
-}  // namespace unnamed
+namespace basic {
+#include "test_basic.c"
+}  // namespace basic
 
 namespace detail {
 #include "test_detail.c"
@@ -46,6 +48,10 @@ namespace iter {
 #include "test_iter.c"
 }  // namespace iter
 
+namespace customized_mnem_ {
+#include "test_customized_mnem.c"
+}  // namespace customized_mnem_
+
 namespace arm {
 #include "test_arm.c"
 }  // namespace arm
@@ -57,6 +63,10 @@ namespace arm64 {
 namespace mips {
 #include "test_mips.c"
 }  // namespace mips
+
+namespace m68k {
+#include "test_m68k.c"
+}  // namespace m68k
 
 namespace ppc {
 #include "test_ppc.c"
@@ -102,13 +112,15 @@ static void test()
 		return;
 	}
 
-	unnamed::test();
+	basic::test();
 	detail::test();
 	skipdata::test();
 	iter::test();
+	customized_mnem_::test();
 	arm::test();
 	arm64::test();
 	mips::test();
+	m68k::test();
 	ppc::test();
 	sparc::test();
 	systemz::test();
@@ -148,7 +160,7 @@ EXTERN_C NTSTATUS DriverEntry(PDRIVER_OBJECT DriverObject, PUNICODE_STRING Regis
 // This functions mimics printf() but does not return the same value as printf()
 // would do. printf() is required to exercise regression tests.
 _Use_decl_annotations_
-int __cdecl printf(const char * format, ...)
+int __cdecl printf(const char * const format, ...)
 {
 	NTSTATUS status;
 	va_list args;

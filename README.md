@@ -1,81 +1,72 @@
-# Java binding as Maven artifact for Capstone disassembly framework
+Capstone Engine
+===============
 
-This is a fork of the excellent original [Capstone disassembly framework](https://github.com/aquynh/capstone). The only difference is that the Java binding library was transformed into a Maven project. The resulting Maven artifact is available via the usual Maven repository.
+[![Build Status](https://travis-ci.org/aquynh/capstone.svg?branch=v4)](https://travis-ci.org/aquynh/capstone)
+[![Build status](https://ci.appveyor.com/api/projects/status/a4wvbn89wu3pinas/branch/v4?svg=true)](https://ci.appveyor.com/project/aquynh/capstone/branch/v4)
 
-## Release notes
-### 3.0.5-rc2
+Capstone is a disassembly framework with the target of becoming the ultimate
+disasm engine for binary analysis and reversing in the security community.
 
-* This is the initial compatible Java binding version distributed as Maven artifact
+Created by Nguyen Anh Quynh, then developed and maintained by a small community,
+Capstone offers some unparalleled features:
 
-## Roadmap
+- Support multiple hardware architectures: ARM, ARM64 (ARMv8), Ethereum VM, M68K,
+  Mips, PPC, Sparc, SystemZ, TMS320C64X, M680X, XCore and X86 (including X86_64).
 
-There are no plans for further modifications on this fork (except the conversion of the Java binding code into a Maven project). Every time when the original Capstone project ([aquynh/capstone](https://github.com/aquynh/capstone)) provides a new release then this code (inclusive Java binding) will be forked again, modified for Maven and distributed as Maven artifact for public use.
+- Having clean/simple/lightweight/intuitive architecture-neutral API.
 
-There's an open pull request on the original project which is intended for the transformation of the existing Java binding into a Maven project. Unfortunately, the progress came to a standstill. If you have ideas for moving it forward, feel free to participate in:
+- Provide details on disassembled instruction (called “decomposer” by others).
 
-* [Converted Java binding into Maven project](https://github.com/aquynh/capstone/pull/609)
-* [change makefile for Maven construct package](https://github.com/aquynh/capstone/pull/678)
+- Provide semantics of the disassembled instruction, such as list of implicit
+  registers read & written.
 
-## Issue tracking
+<<<<<<<< HEAD:README.md
+- Implemented in pure C language, with lightweight bindings for D, Clojure, F#,
+  Common Lisp, Visual Basic, PHP, PowerShell, Emacs, Haskell, Perl, Python,
+  Ruby, C#, NodeJS, Java, GO, C++, OCaml, Lua, Rust, Delphi, Free Pascal & Vala
+  (ready either in main code, or provided externally by the community).
+========
+- Implemented in pure C language, with lightweight bindings for PowerShell,
+  Emacs, Haskell, Perl, Python, Ruby, C#, NodeJS, Java, GO, C++, OCaml, Lua,
+  Rust, Delphi, Free Pascal & Vala ready either in main code, or provided
+  externally by the community).
+>>>>>>>> 4.0.2:README
 
-Bugs, feature requests or pull requests should be reported via Github's issue tracking system. We only accept requests that concern the conversion to Maven project of the Java binding part. Issues in Capstone itself or in the Java binding code should be reported at the [original project site](https://github.com/aquynh/capstone/issues).
+- Native support for all popular platforms: Windows, Mac OSX, iOS, Android,
+  Linux, \*BSD, Solaris, etc.
 
-## Contributions
+- Thread-safe by design.
 
-If you would like to help us please contact us via issue tracking or email.
+- Special support for embedding into firmware or OS kernel.
 
-## License & Author
+- High performance & suitable for malware analysis (capable of handling various
+  X86 malware tricks).
 
-The license and author is the same as in the original project. We ([TRANScurity](http://transcurity.co/)) only modify the structure of Java binding code in order to make it compatible with Maven.
+- Distributed under the open source BSD license.
 
-# Developer Guide
-## Getting started
+Further information is available at http://www.capstone-engine.org
 
-You can import the artifact by:
 
-```xml
-<dependency>
-    <groupId>com.github.transcurity</groupId>
-    <artifactId>capstone</artifactId>
-    <version>W.X.Y-rcZ</version>
-</dependency>
-```
+Compile
+-------
 
-Furthermore, you need to obtain the native binaries from <http://www.capstone-engine.org/> or from the releases page: <https://github.com/aquynh/capstone/releases>
+See COMPILE.TXT file for how to compile and install Capstone.
 
-Please note that the provided command line based test classes from the original project of Java binding are not intact anymore, because the binding code classes were moved in order to create a Maven compatible structure.
 
-## Troubleshooting
-### The Java wrapper cannot find the natives and aborts with: ``UnsatisfiedLinkError``
+Documentation
+-------------
 
-If you get following Exception:
+See docs/README for how to customize & program your own tools with Capstone.
 
-```
-...\Disassembler\target>java -jar disassembler-1.0-SNAPSHOT.jar
-Exception in thread "main" java.lang.UnsatisfiedLinkError: Unable to load library 'capstone': Native library (win32-x86-64/capstone.dll) not found in resource path ([file:/.../Disassembler/target/disassembler-1.0-SNAPSHOT.jar])
-        at com.sun.jna.NativeLibrary.loadLibrary(NativeLibrary.java:303)
-        at com.sun.jna.NativeLibrary.getInstance(NativeLibrary.java:427)
-        at com.sun.jna.Library$Handler.<init>(Library.java:179)
-        at com.sun.jna.Native.loadLibrary(Native.java:569)
-        at com.sun.jna.Native.loadLibrary(Native.java:544)
-        at capstone.Capstone.<init>(Capstone.java:372)
-        at co.transcurity.disassembler.Main.main(Main.java:157)
-```
 
-...it may give the impression that ``capstone.dll`` cannot be located. First, make sure that your ``capstone.dll`` is located in the same directory just like your JAR file or that it is installed in any other lookup path (e. g. ``C:\Windows\System32`` or respectively ``C:\Windows\SysWOW64`` for 32 bit JVM) examined by Java. You can also modify the lookup path on start up:
+Hack
+----
 
-```
-java -Djava.library.path=C:\my\lookup\path\folder -jar disassembler-1.0-SNAPSHOT.jar
-```
+See HACK.TXT file for the structure of the source code.
 
-Another way to advise the directory location of ``capstone.dll`` is to set a special property of JNA library:
 
-```
-java -Djna.library.path=./lib/natives -jar disassembler-1.0-SNAPSHOT.jar
-```
+License
+-------
 
-This error also occurs if you try to execute a 64 bit JVM with a 32 bit ``capstone.dll``. You cannot mix 32 bit and 64 bit architectures.
-
-If Capstone is accessible for the JVM and has a matching architecture but this error still occurs then indeed there may be further DLLs missing that are imported by Capstone. One of these DLLs is ``vcruntime140.dll``. Usually, it comes with the installation of Visual Studio but you could also obtain it anywhere else and put it near ``capstone.dll``. [Dependency Walker](http://www.dependencywalker.com/) is a tool that shows you which dependent DLL in ``capstone.dll`` cannot be found.
-
-https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
+This project is released under the BSD license. If you redistribute the binary
+or source code of Capstone, please attach file LICENSE.TXT with your products.

@@ -12,14 +12,14 @@
 //===----------------------------------------------------------------------===//
 
 /* Capstone Disassembly Engine */
-/* By Nguyen Anh Quynh <aquynh@gmail.com>, 2013-2014 */
+/* By Nguyen Anh Quynh <aquynh@gmail.com>, 2013-2015 */
 
 #ifdef CAPSTONE_HAS_SYSZ
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <platform.h>
+#include <capstone/platform.h>
 
 #include "SystemZInstPrinter.h"
 #include "../../MCInst.h"
@@ -41,17 +41,7 @@ void SystemZ_post_printer(csh ud, cs_insn *insn, char *insn_asm, MCInst *mci)
 
 static void printAddress(MCInst *MI, unsigned Base, int64_t Disp, unsigned Index, SStream *O)
 {
-	if (Disp >= 0) {
-		if (Disp > HEX_THRESHOLD)
-			SStream_concat(O, "0x%"PRIx64, Disp);
-		else
-			SStream_concat(O, "%"PRIu64, Disp);
-	} else {
-		if (Disp < -HEX_THRESHOLD)
-			SStream_concat(O, "-0x%"PRIx64, -Disp);
-		else
-			SStream_concat(O, "-%"PRIu64, -Disp);
-	}
+	printInt64(O, Disp);
 
 	if (Base) {
 		SStream_concat0(O, "(");
@@ -70,6 +60,15 @@ static void printAddress(MCInst *MI, unsigned Base, int64_t Disp, unsigned Index
 		if (MI->csh->detail) {
 			MI->flat_insn->detail->sysz.operands[MI->flat_insn->detail->sysz.op_count].type = SYSZ_OP_IMM;
 			MI->flat_insn->detail->sysz.operands[MI->flat_insn->detail->sysz.op_count].imm = Disp;
+			MI->flat_insn->detail->sysz.op_count++;
+		}
+	} else {
+		SStream_concat(O, "(%%%s)", getRegisterName(Index));
+		if (MI->csh->detail) {
+			MI->flat_insn->detail->sysz.operands[MI->flat_insn->detail->sysz.op_count].type = SYSZ_OP_MEM;
+			MI->flat_insn->detail->sysz.operands[MI->flat_insn->detail->sysz.op_count].mem.base = (uint8_t)SystemZ_map_register(Base);
+			MI->flat_insn->detail->sysz.operands[MI->flat_insn->detail->sysz.op_count].mem.index = (uint8_t)SystemZ_map_register(Index);
+			MI->flat_insn->detail->sysz.operands[MI->flat_insn->detail->sysz.op_count].mem.disp = Disp;
 			MI->flat_insn->detail->sysz.op_count++;
 		}
 	}
@@ -92,17 +91,7 @@ static void _printOperand(MCInst *MI, MCOperand *MO, SStream *O)
 	} else if (MCOperand_isImm(MO)) {
 		int64_t Imm = MCOperand_getImm(MO);
 
-		if (Imm >= 0) {
-			if (Imm > HEX_THRESHOLD)
-				SStream_concat(O, "0x%"PRIx64, Imm);
-			else
-				SStream_concat(O, "%"PRIu64, Imm);
-		} else {
-			if (Imm < -HEX_THRESHOLD)
-				SStream_concat(O, "-0x%"PRIx64, -Imm);
-			else
-				SStream_concat(O, "-%"PRIu64, -Imm);
-		}
+		printInt64(O, Imm);
 
 		if (MI->csh->detail) {
 			MI->flat_insn->detail->sysz.operands[MI->flat_insn->detail->sysz.op_count].type = SYSZ_OP_IMM;
@@ -116,17 +105,7 @@ static void printU4ImmOperand(MCInst *MI, int OpNum, SStream *O)
 {
 	int64_t Value = MCOperand_getImm(MCInst_getOperand(MI, OpNum));
 	// assert(isUInt<4>(Value) && "Invalid u4imm argument");
-	if (Value >= 0) {
-		if (Value > HEX_THRESHOLD)
-			SStream_concat(O, "0x%"PRIx64, Value);
-		else
-			SStream_concat(O, "%"PRIu64, Value);
-	} else {
-		if (Value < -HEX_THRESHOLD)
-			SStream_concat(O, "-0x%"PRIx64, -Value);
-		else
-			SStream_concat(O, "-%"PRIu64, -Value);
-	}
+	printInt64(O, Value);
 
 	if (MI->csh->detail) {
 		MI->flat_insn->detail->sysz.operands[MI->flat_insn->detail->sysz.op_count].type = SYSZ_OP_IMM;
@@ -140,10 +119,7 @@ static void printU6ImmOperand(MCInst *MI, int OpNum, SStream *O)
 	uint32_t Value = (uint32_t)MCOperand_getImm(MCInst_getOperand(MI, OpNum));
 	// assert(isUInt<6>(Value) && "Invalid u6imm argument");
 
-	if (Value > HEX_THRESHOLD)
-		SStream_concat(O, "0x%x", Value);
-	else
-		SStream_concat(O, "%u", Value);
+	printUInt32(O, Value);
 
 	if (MI->csh->detail) {
 		MI->flat_insn->detail->sysz.operands[MI->flat_insn->detail->sysz.op_count].type = SYSZ_OP_IMM;
@@ -239,17 +215,7 @@ static void printS32ImmOperand(MCInst *MI, int OpNum, SStream *O)
 	int32_t Value = (int32_t)MCOperand_getImm(MCInst_getOperand(MI, OpNum));
 	// assert(isInt<32>(Value) && "Invalid s32imm argument");
 
-	if (Value >= 0) {
-		if (Value > HEX_THRESHOLD)
-			SStream_concat(O, "0x%x", Value);
-		else
-			SStream_concat(O, "%u", Value);
-	} else {
-		if (Value < -HEX_THRESHOLD)
-			SStream_concat(O, "-0x%x", -Value);
-		else
-			SStream_concat(O, "-%u", -Value);
-	}
+	printInt32(O, Value);
 
 	if (MI->csh->detail) {
 		MI->flat_insn->detail->sysz.operands[MI->flat_insn->detail->sysz.op_count].type = SYSZ_OP_IMM;
@@ -263,10 +229,7 @@ static void printU32ImmOperand(MCInst *MI, int OpNum, SStream *O)
 	uint32_t Value = (uint32_t)MCOperand_getImm(MCInst_getOperand(MI, OpNum));
 	// assert(isUInt<32>(Value) && "Invalid u32imm argument");
 
-	if (Value > HEX_THRESHOLD)
-		SStream_concat(O, "0x%x", Value);
-	else
-		SStream_concat(O, "%u", Value);
+	printUInt32(O, Value);
 
 	if (MI->csh->detail) {
 		MI->flat_insn->detail->sysz.operands[MI->flat_insn->detail->sysz.op_count].type = SYSZ_OP_IMM;
@@ -291,28 +254,24 @@ static void printAccessRegOperand(MCInst *MI, int OpNum, SStream *O)
 static void printPCRelOperand(MCInst *MI, int OpNum, SStream *O)
 {
 	MCOperand *MO = MCInst_getOperand(MI, OpNum);
-	int32_t imm;
 
 	if (MCOperand_isImm(MO)) {
-		imm = (int32_t)MCOperand_getImm(MO);
-		if (imm >= 0) {
-			if (imm > HEX_THRESHOLD)
-				SStream_concat(O, "0x%x", imm);
-			else
-				SStream_concat(O, "%u", imm);
-		} else {
-			if (imm < -HEX_THRESHOLD)
-				SStream_concat(O, "-0x%x", -imm);
-			else
-				SStream_concat(O, "-%u", -imm);
-		}
+		int64_t imm = MCOperand_getImm(MO);
+
+		printInt64(O, imm);
 
 		if (MI->csh->detail) {
 			MI->flat_insn->detail->sysz.operands[MI->flat_insn->detail->sysz.op_count].type = SYSZ_OP_IMM;
-			MI->flat_insn->detail->sysz.operands[MI->flat_insn->detail->sysz.op_count].imm = (int64_t)imm;
+			MI->flat_insn->detail->sysz.operands[MI->flat_insn->detail->sysz.op_count].imm = imm;
 			MI->flat_insn->detail->sysz.op_count++;
 		}
 	}
+}
+
+static void printPCRelTLSOperand(MCInst *MI, int OpNum, SStream *O)
+{
+	// Output the PC-relative operand.
+	printPCRelOperand(MI, OpNum, O);
 }
 
 static void printOperand(MCInst *MI, int OpNum, SStream *O)
@@ -364,7 +323,7 @@ static void printBDLAddrOperand(MCInst *MI, int OpNum, SStream *O)
 
 static void printCond4Operand(MCInst *MI, int OpNum, SStream *O)
 {
-	static char *const CondNames[] = {
+	static const char *const CondNames[] = {
 		"o", "h", "nle", "l", "nhe", "lh", "ne",
 		"e", "nlh", "he", "nl", "le", "nh", "no"
 	};

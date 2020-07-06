@@ -8,7 +8,7 @@
 //===----------------------------------------------------------------------===//
 
 /* Capstone Disassembly Engine */
-/* By Nguyen Anh Quynh <aquynh@gmail.com>, 2013-2014 */
+/* By Nguyen Anh Quynh <aquynh@gmail.com>, 2013-2015 */
 
 #ifdef CAPSTONE_HAS_SYSZ
 
@@ -18,6 +18,8 @@
 
 #include "../../cs_priv.h"
 #include "../../utils.h"
+
+#include "SystemZDisassembler.h"
 
 #include "../../MCInst.h"
 #include "../../MCInstrDesc.h"
@@ -301,8 +303,7 @@ bool SystemZ_getInstruction(csh ud, const uint8_t *code, size_t code_len, MCInst
 		uint16_t *size, uint64_t address, void *info)
 {
 	uint64_t Inst;
-	uint8_t Bytes[6];
-	uint8_t *Table;
+	const uint8_t *Table;
 	uint16_t I; 
 
 	// The top 2 bits of the first byte specify the size.
@@ -322,15 +323,13 @@ bool SystemZ_getInstruction(csh ud, const uint8_t *code, size_t code_len, MCInst
 		return false;
 
 	if (MI->flat_insn->detail) {
-		memset(MI->flat_insn->detail, 0, sizeof(cs_detail));
+		memset(MI->flat_insn->detail, 0, offsetof(cs_detail, sysz)+sizeof(cs_sysz));
 	}
-
-	memcpy(Bytes, code, *size);
 
 	// Construct the instruction.
 	Inst = 0;
 	for (I = 0; I < *size; ++I)
-		Inst = (Inst << 8) | Bytes[I];
+		Inst = (Inst << 8) | code[I];
 
 	return decodeInstruction(Table, MI, Inst, address, info, 0);
 }

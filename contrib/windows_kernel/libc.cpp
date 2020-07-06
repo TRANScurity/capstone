@@ -19,6 +19,7 @@ struct MEMBLOCK
 	size_t	size;
 #pragma warning(push)               
 #pragma warning (disable : 4200)
+	__declspec(align(MEMORY_ALLOCATION_ALIGNMENT))
 	char data[0]; 
 #pragma warning(pop)
 };
