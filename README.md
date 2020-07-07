@@ -5,6 +5,8 @@ This is a fork of the excellent original [Capstone disassembly framework](https:
 ## Release notes
 ### 4.0.2
 
+* Fixed issue in JNA library which indicated wrong pointer size for newer Java VM versions (see: https://github.com/aquynh/capstone/issues/1658)
+  * Manual modification of inconvenient major version counter in Java binding (`Capstone.java`) which made it incompatible with the release's native libraries: Transformed from version `5` to `4`
 * Bug fixes and enhancements
 
 ### 3.0.5-rc2
