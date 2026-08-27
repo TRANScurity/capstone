@@ -1,5 +1,5 @@
 /* Capstone Disassembly Engine */
-/* By Nguyen Anh Quynh <aquynh@gmail.com>, 2013-2015 */
+/* By Nguyen Anh Quynh <aquynh@gmail.com>, 2013-2019 */
 
 #ifndef CS_PRIV_H
 #define CS_PRIV_H
@@ -68,8 +68,13 @@ struct cs_struct {
 	cs_opt_value detail, imm_unsigned;
 	int syntax;	// asm syntax for simple printer such as ARM, Mips & PPC
 	bool doing_mem;	// handling memory operand in InstPrinter code
+	bool doing_SME_Index; // handling a SME instruction that has index
 	unsigned short *insn_cache;	// index caching for mapping.c
 	GetRegisterName_t get_regname;
+	// per-handle O(1) lookup tables for x86 (freed on cs_close)
+	uint16_t *x86_insn_lut;	// insn id -> index in insns[] array, 0xffff for none
+	uint32_t *x86_insn_reg_lut;	// packed Intel/ATT reg+access entries
+	unsigned int x86_insn_lut_max;	// max insn id in lookup tables
 	bool skipdata;	// set this to True if we skip data when disassembling
 	uint8_t skipdata_size;	// how many bytes to skip
 	cs_opt_skipdata skipdata_setup;	// user-defined skipdata setup
@@ -93,8 +98,15 @@ extern cs_vsnprintf_t cs_vsnprintf;
 // For any release build CAPSTONE_DEBUG has to be undefined.
 #ifdef CAPSTONE_DEBUG
 #define CS_ASSERT(expr) assert(expr)
+#define CS_ASSERT_RET(expr) assert(expr)
 #else
 #define CS_ASSERT(expr)
+#define CS_ASSERT_RET(expr) \
+	do { \
+		if (!(expr)) { \
+			return; \
+		} \
+	} while (0)
 #endif
 
 #endif

@@ -1,7 +1,7 @@
-PYTHON2 = python
-PYTHON3 = python3
+PYTHON2 ?= python2
+PYTHON3 ?= python3
 
-.PHONY: gen_const install install3 install_cython sdist sdist3 bdist bdist3 clean check
+.PHONY: gen_const install sdist bdist clean check
 
 gen_const:
 	cd .. && $(PYTHON2) const_generator.py python
@@ -20,23 +20,6 @@ install3:
 		$(PYTHON3) setup.py build install --root="${DESTDIR}"; \
 	else \
 		$(PYTHON3) setup.py build install; \
-	fi
-
-# NOTE: Newer cython can be installed by: sudo pip install --upgrade cython
-install_cython:
-	rm -rf src/
-	if test -n "${DESTDIR}"; then \
-		$(PYTHON2) setup_cython.py build install --root="${DESTDIR}"; \
-	else \
-		$(PYTHON2) setup_cython.py build install; \
-	fi
-
-install3_cython:
-	rm -rf src/
-	if test -n "${DESTDIR}"; then \
-		$(PYTHON3) setup_cython.py build install --root="${DESTDIR}"; \
-	else \
-		$(PYTHON3) setup_cython.py build install; \
 	fi
 
 # build & upload PyPi package with source code of the core
@@ -69,7 +52,9 @@ clean:
 
 
 TESTS = test_basic.py test_detail.py test_arm.py test_arm64.py test_m68k.py test_mips.py
-TESTS += test_ppc.py test_sparc.py test_systemz.py test_x86.py test_xcore.py test_tms320c64x.py test_m680x.py test_skipdata.py
+TESTS += test_ppc.py test_sparc.py test_systemz.py test_x86.py test_xcore.py test_tms320c64x.py
+TESTS += test_m680x.py test_skipdata.py test_mos65xx.py test_bpf.py test_riscv.py
+TESTS += test_evm.py
 
 check:
 	@for t in $(TESTS); do \
