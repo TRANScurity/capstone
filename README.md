@@ -2,6 +2,9 @@
 
 This is a fork of the excellent original [Capstone disassembly framework](https://github.com/aquynh/capstone). The only difference is that the Java binding library was transformed into a Maven project. The resulting Maven artifact is available via the usual Maven repository.
 
+For the available releases, there exist dedicated branches in the format: `feature/capstone-x.y.z`
+You can switch to the corresponding branch to get the Java binding code for the respective Capstone release.
+
 ## Release notes
 ### 5.0.9
 
