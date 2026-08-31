@@ -47,7 +47,7 @@
         &lt;/server&gt;
     &lt;/servers&gt;
 
-    2. If the release fails due to unkown fingerprint key, upload it to a PGP server:
+    2. If the release fails due to unknown fingerprint key, upload it to a PGP server:
 
     $gpg - -list-secret-keys - -keyid-format LONG
 
@@ -59,7 +59,7 @@
 
     $gpg - -keyserver keyserver.ubuntu.com - -send-keys YOUR_LONG_KEY_ID
 
-    3. Upload the release to Maven Central (disable Zscaler):
+    3. Upload the release to Maven Central (DISABLE ZSCALER):
 
     $mvn clean deploy -Prelease
     -->
